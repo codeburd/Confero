@@ -5,3 +5,6 @@ It's not as capable at finding duplicate images as an image-specific utility, or
 It will find, for example, different archives that contain an overlap of files within - providing the archives use the same compression. Or different edits all derived from the same source document.
 
 It uses some common algorithms to identify files which have a large overlap in byte sequence, regardless of the offset of those sequences within the file.
+
+
+The mman.c/.h files are only needed for compiling on Windows. They just wrap the Windows API functions, and are copied for convenience from https://github.com/boldowa/mman-win32ssssss/
