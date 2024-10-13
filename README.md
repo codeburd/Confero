@@ -7,4 +7,4 @@ It will find, for example, different archives that contain an overlap of files w
 It uses some common algorithms to identify files which have a large overlap in byte sequence, regardless of the offset of those sequences within the file.
 
 
-The mman.c/.h files are only needed for compiling on Windows. They just wrap the Windows API functions, and are copied for convenience from https://github.com/boldowa/mman-win32ssssss/
+The mman.c/.h files are only needed for compiling on Windows. They just wrap the Windows API functions, and are copied for convenience from https://github.com/boldowa/mman-win32/
