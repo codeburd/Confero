@@ -1,0 +1,14 @@
+Confero finds similar files. It does this using three algorithms.
+
+Step one: Each file is chunked using a variable-length chunking algorithm. This is built around a FNV-64 hash function. This isn't the absolute fastest possible - a cyclic polynomial would be a better choice for performance - but avoiding such mathematics makes the algorithm a lot easier to follow and test. The performance matters little, as the limiting factor is usually going to be reading from disk. Even used in this inefficient manner that reduces the speed by a factor of eight, FNV is still pretty fast.
+
+Step two: Each chunk is then reduced to a hash integer, which is stored in a simple (k=1) Bloom table. The hash used for this is again FNV-64. There's no strict requirement this has to use the same hash, but the function is already present. The hash is taken modulo the number of buckets in the table, and the appropriate bit set. In this manner each file is reduced to a fixed-length signature. The size of these signature is a trade-off: Too small and large files would have so many bits set their signature would be almost all ones leading to unacceptable levels of false matches. Too long a signature wouldn't produce any problems, but it would consume excessive memory resources.
+
+Step three: Each pair of signatures is measured for similarity using Jaccard similarity as the metric. Any match over the threshold is output.
+
+
+There are two tunable paramaters: Buckets (B) and threshhold (T). The first is the size of the bloom filter (in 64-bit units), the second is the chunking threshhold (Actually 2**T). These are used to set the time-accuracy tradeoff, as confero is a statistical program.
+
+Increasing B increases accuracy when handling large files, at the expense of increased memory usage. A warning will be output if B is too small to handle a file. Increasing B to any value will never adversely affect the program, so long as there is sufficient memory available, so you can always err on the side of too-large.
+
+Increasing T increases the average number of chunks in a file - an increase by one step doubles the average number of chunks, which allows for more accurate comparisons especially on small files. Again, a warning will be output if a file is too small to anayse without increasing T. The trade-off here is that higher T is required to handle small files, but actually prevents the handling of large files unless B is adjusted to compensate: For each step up of T, the required B will double.
